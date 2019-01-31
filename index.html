@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <style>
+  h1, h2 {
+  font-family: sans-serif;
+  text-align: center;
+  margin: 5px;
+  }
+  .container {
+   width: 90%;
+   height: 90%;
+   padding: 8px;
+   margin: auto;
+  }
+  
+  </style>
+  
+  <script src="//d3plus.org/js/d3.js"></script>
+  <script src="//d3plus.org/js/d3plus.js"></script>
+  
+  <!--Allows us to use underscore javascript library -->
+  <?!= include('underscore.js') ?> 
+   
+  <!--Page Titles --> 
+  <h1>API Calls</h1>
+  <h2>Month Year</h2>    <!--Change month/year here -->
+  </head>
+  <body>
+  
+<!--These 2 divs will hold the treemaps -->
+<div id ="div" class="container"></div>
+<h2>Grouped by Application</h2>
+<div id ="div2" class="container"></div>
+     
+  <script>  
+  //pull data from Code.gs and convert to JSON format
+  var data = JSON.parse(<?= myData ?>);  
+
+  //split data array grouping by API using underscore function
+  var unique = _.groupBy(data, 'API');
+   
+  // This instantiates and draws the first treemap, grouped by API then Vendor
+  var visualization1 = d3plus.viz()
+  .container("#div")                           // container DIV to hold the visualization
+  .data(data)                                  // data to use with the visualization
+  .type("tree_map")                            // visualisation = treemap
+  .id(["API", "Vendor"])                       // key for which our data is unique on
+  .size("Calls")                               // sizing of blocks - based on number of calls
+  .color({primary:"API", secondary: "Vendor"}) //sets colour at each zoom level 
+  .legend({                                    //adds a legend, requires color() to work 
+     "order": {                                //doesn't currently work due to color taking primary/secondary
+     "sort": "desc",
+     "value": "size" }
+     })
+  .format({"text": function(text,key){         // Ensures text comes across case sensitive 
+     return text
+        }
+     })
+  .labels({"valign": "top"})	               // Adds percentages to boxes
+  .font({"family": "sans-serif", "font-size": "28"}) 
+  .draw() 
+    
+  
+  // This instantiates and draws the second treemap, grouped by Vendor then API
+  var visualization2= d3plus.viz()
+  .container("#div2")                          // container DIV to hold the visualization
+  .data(data)                                  // data to use with the visualization
+  .type("tree_map")                            // visualization type
+  .id(["Vendor", "API"])                       // key for which our data is unique on
+  .size("Calls")                               // sizing of blocks
+  .color({primary:"Vendor", secondary: "API"}) //sets colour at each zoom level 
+  .legend({                                    //adds a legend, requires color() to work
+     "order": {                                //doesn't currently work due to color taking primary/secondary
+     "sort": "desc",
+     "value": "size" }
+     })
+  .format({"text": function(text,key){         // Ensures text comes across case sensitive 
+     return text
+        }
+   })
+  .labels({"valign": "top"})	               // Adds percentages to boxes
+  .font({"family": "sans-serif", "font-size": "28"})
+  .draw() 
+    
+  </script>
+  </body>
+</html>
+
+
+
+
+
+
+
